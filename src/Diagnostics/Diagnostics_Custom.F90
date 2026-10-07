@@ -181,8 +181,6 @@ Contains
         ! Edit Above This Line
         !=============================================
         
-        
-        
 
     End Subroutine Custom_MHD_Diagnostics
 

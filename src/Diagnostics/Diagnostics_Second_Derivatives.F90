@@ -506,7 +506,7 @@ Contains
         ! d2y/dthetadphi) are computed from the first derivatives in inbuffer with FFTs
         ! only; no Legendre transform is involved.
         !
-        ! Every field in p1a and s2a is transposed so only the three fields needed per variable are kept there;
+        ! Every field in p1a and s2a is transposed so only the three fields needed per variable are kept;
         ! the radial derivatives are taken in a private work array instead.
         !
         ! Steps:

@@ -61,7 +61,6 @@ Contains
 
         If (compute_quantity(curl_v_grad_v_r) .or. compute_quantity(curl_v_grad_v_r_squared)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = DDBUFF(PSI,dvpdrdt) * buffer(PSI,vr) * one_over_r(r) * ref%density(r) &
                 + DDBUFF(PSI,dvpdtdt) * buffer(PSI,vtheta) * ref%density(r) * one_over_r(r) * one_over_r(r) &
                 + buffer(PSI,dvpdr) * buffer(PSI,dvrdt) * one_over_r(r) * ref%density(r) &
@@ -104,7 +103,6 @@ Contains
     
         If (compute_quantity(curl_v_grad_v_theta) .or. compute_quantity(curl_v_grad_v_theta_squared)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = -DDBUFF(PSI,dvpdrdr) * buffer(PSI,vr) * ref%density(r) &
                 - buffer(PSI,dvpdr) * buffer(PSI,dvrdr) * ref%density(r) &
                 - DDBUFF(PSI,dvpdrdt) * buffer(PSI,vtheta) * one_over_r(r) * ref%density(r) &
@@ -144,7 +142,6 @@ Contains
         
         If (compute_quantity(curl_v_grad_v_phi) .or. compute_quantity(curl_v_grad_v_phi_squared)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = DDBUFF(PSI,dvtdrdr) * buffer(PSI,vr) * ref%density(r) &
                 + buffer(PSI,dvrdr) * buffer(PSI,dvtdr) * ref%density(r) &
                 + DDBUFF(PSI,dvtdrdt) * buffer(PSI,vtheta) * one_over_r(r) * ref%density(r) &
@@ -182,10 +179,6 @@ Contains
 
         If (compute_quantity(curl_v_grad_v_abs)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy; see the note above
-                ! curl_v_grad_v_r. vgv_abs_r/t/p hold the r/theta/phi component formulas
-                ! above with ref%density(r) divided out (it is a common factor of every
-                ! term in each), so it is applied once at the end instead.
                 vgv_abs_r = DDBUFF(PSI,dvpdrdt) * buffer(PSI,vr) * one_over_r(r) &
                 + DDBUFF(PSI,dvpdtdt) * buffer(PSI,vtheta) * one_over_r(r) * one_over_r(r) &
                 + buffer(PSI,dvpdr) * buffer(PSI,dvrdt) * one_over_r(r) &
@@ -264,13 +257,8 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(v'.grad v') is identical in form to curl(v.grad v) above (both
-        ! are the curl of rho*(A.grad)A for some vector field A), just with
-        ! buffer -> fbuffer and DDBUFF -> d2_fbuffer (the fluctuating-field
-        ! counterparts of the full-field buffer/DDBUFF).
         If (compute_quantity(curl_vp_grad_vp_r)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = d2_fbuffer(PSI,dvpdrdt) * fbuffer(PSI,vr) * one_over_r(r) * ref%density(r) &
                 + d2_fbuffer(PSI,dvpdtdt) * fbuffer(PSI,vtheta) * ref%density(r) * one_over_r(r) * one_over_r(r) &
                 + fbuffer(PSI,dvpdr) * fbuffer(PSI,dvrdt) * one_over_r(r) * ref%density(r) &
@@ -306,7 +294,6 @@ Contains
 
         If (compute_quantity(curl_vp_grad_vp_theta)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = -d2_fbuffer(PSI,dvpdrdr) * fbuffer(PSI,vr) * ref%density(r) &
                 - fbuffer(PSI,dvpdr) * fbuffer(PSI,dvrdr) * ref%density(r) &
                 - d2_fbuffer(PSI,dvpdrdt) * fbuffer(PSI,vtheta) * one_over_r(r) * ref%density(r) &
@@ -339,7 +326,6 @@ Contains
 
         If (compute_quantity(curl_vp_grad_vp_phi)) Then
             DO_PSI
-                ! Re-derived from curl(rho*(v.grad)v) with sympy
                 qty(PSI) = d2_fbuffer(PSI,dvtdrdr) * fbuffer(PSI,vr) * ref%density(r) &
                 + fbuffer(PSI,dvrdr) * fbuffer(PSI,dvtdr) * ref%density(r) &
                 + d2_fbuffer(PSI,dvtdrdt) * fbuffer(PSI,vtheta) * one_over_r(r) * ref%density(r) &
@@ -368,11 +354,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(<v>.grad <v>) is a fresh (but related) derivation: <v> is
-        ! axisymmetric (m0_values has no phi index at all), so every
-        ! phi-derivative term in curl(v.grad v) above vanishes identically,
-        ! leaving a much shorter expression. Derived with sympy
-        ! (v_r/v_t/v_p treated as functions of r,theta only)
         If (compute_quantity(curl_vm_grad_vm_r)) Then
             DO_PSI
                 qty(PSI) = d2_m0(PSI2,dvpdrdt)*m0_values(PSI2,vr)*one_over_r(r)*ref%density(r) &
@@ -431,8 +412,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(v'.grad <v>) and curl(<v>.grad v') are asymmetric: ADotGradB(A,B)
-        ! is not symmetric in A and B (only B is differentiated). Derived with sympy.
         If (compute_quantity(curl_vp_grad_vm_r)) Then
             DO_PSI
                 qty(PSI) = d2_m0(PSI2,dvpdrdt)*fbuffer(PSI,vr)*one_over_r(r)*ref%density(r) &
@@ -631,16 +610,12 @@ Contains
         
         If (compute_quantity(curl_buoyancy_force_abs)) Then
             DO_PSI
-                ! Note: one_over_r(r) multiplies both curl_buoyancy_force_theta and
-                ! curl_buoyancy_force_phi above; factored out here.
                 qty(PSI) = one_over_r(r) * ((ref%Buoyancy_Coeff(r) * csctheta(t) * buffer(PSI,dtdp))**2 + &
                            (-ref%Buoyancy_Coeff(r) * buffer(PSI,dtdt))**2)**(0.5)
             END_DO
             Call Add_Quantity(qty)
         Endif
 
-        ! Fluctuating buoyancy curl: identical structure to curl_buoyancy_force_*
-        ! above, T -> T'. curl_buoyancy_pforce_r is always 0, matching curl_buoyancy_force_r.
         If (compute_quantity(curl_buoyancy_pforce_theta)) Then
             DO_PSI
                 qty(PSI) = ref%Buoyancy_Coeff(r) * (csctheta(t) * &
@@ -656,10 +631,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! Mean buoyancy curl: T -> <T>. <T> is axisymmetric (m0_values has no
-        ! phi index), so curl_buoyancy_mforce_theta ~ d<T>/dphi is identically
-        ! 0.
-        ! Only curl_buoyancy_mforce_phi ~ d<T>/dtheta survives.
         If (compute_quantity(curl_buoyancy_mforce_phi)) Then
             DO_PSI
                 qty(PSI) = -ref%Buoyancy_Coeff(r) * ( one_over_r(r) * m0_values(PSI2,dtdt))
@@ -679,7 +650,6 @@ Contains
 
         If (compute_quantity(curl_j_cross_b_r) .or. compute_quantity(curl_j_cross_b_r_squared)) Then
             DO_PSI
-                ! Re-derived from curl(Lc*(curl B) x B) with sympy
                 qty(PSI) = DDBUFF(PSI,dbpdrdt)*buffer(PSI,br)*one_over_r(r)*ref%Lorentz_Coeff &
                 + DDBUFF(PSI,dbpdtdp)*buffer(PSI,bphi)*csctheta(t)*one_over_r(r)**2*ref%Lorentz_Coeff &
                 + DDBUFF(PSI,dbpdtdt)*buffer(PSI,btheta)*one_over_r(r)**2*ref%Lorentz_Coeff &
@@ -716,7 +686,6 @@ Contains
         
         If (compute_quantity(curl_j_cross_b_theta) .or. compute_quantity(curl_j_cross_b_theta_squared)) Then
             DO_PSI
-                ! Re-derived from curl(Lc*(curl B) x B) with sympy
                 qty(PSI) = -DDBUFF(PSI,dbpdrdr)*buffer(PSI,br)*ref%Lorentz_Coeff &
                 - buffer(PSI,dbpdr)*buffer(PSI,dbrdr)*ref%Lorentz_Coeff &
                 - DDBUFF(PSI,dbpdrdt)*buffer(PSI,btheta)*one_over_r(r)*ref%Lorentz_Coeff &
@@ -748,7 +717,6 @@ Contains
         
         If (compute_quantity(curl_j_cross_b_phi) .or. compute_quantity(curl_j_cross_b_phi_squared)) Then
             DO_PSI
-                ! Re-derived from curl(Lc*(curl B) x B) with sympy
                 qty(PSI) = DDBUFF(PSI,dbtdrdr)*buffer(PSI,br)*ref%Lorentz_Coeff &
                 + buffer(PSI,dbrdr)*buffer(PSI,dbtdr)*ref%Lorentz_Coeff &
                 + DDBUFF(PSI,dbtdrdt)*buffer(PSI,btheta)*one_over_r(r)*ref%Lorentz_Coeff &
@@ -780,11 +748,6 @@ Contains
         
         If (compute_quantity(curl_j_cross_b_abs)) Then
             DO_PSI
-                ! Re-derived from curl(Lc*(curl B) x B) with sympy. 
-                ! jxb_abs_r/t/p hold the r/theta/phi
-                ! component formulas above with ref%Lorentz_Coeff divided out (it
-                ! is a common factor of every term in each), so it is applied
-                ! once at the end instead.
                 jxb_abs_r = DDBUFF(PSI,dbpdrdt)*buffer(PSI,br)*one_over_r(r) &
                 + DDBUFF(PSI,dbpdtdp)*buffer(PSI,bphi)*csctheta(t)*one_over_r(r)**2 &
                 + DDBUFF(PSI,dbpdtdt)*buffer(PSI,btheta)*one_over_r(r)**2 &
@@ -849,9 +812,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(Lc*(curl B') x B') is identical in form to curl(Lc*(curl B) x B)
-        ! above, just with buffer(br/btheta/bphi) -> fbuffer(...) and
-        ! DDBUFF -> d2_fbuffer (the fluctuating-field counterparts).
         If (compute_quantity(curl_jp_cross_bp_r)) Then
             DO_PSI
                 qty(PSI) = d2_fbuffer(PSI,dbpdrdt)*fbuffer(PSI,br)*one_over_r(r)*ref%Lorentz_Coeff &
@@ -928,11 +888,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(Lc*(curl <B>) x <B>) is a fresh (but related) derivation: <B>
-        ! is axisymmetric (m0_values has no phi index), so every
-        ! phi-derivative term in curl(Lc*(curl B) x B) above vanishes.
-        ! Derived with sympy (B_r/B_t/B_p treated
-        ! as functions of r,theta only).
         If (compute_quantity(curl_jm_cross_bm_r)) Then
             DO_PSI
                 qty(PSI) = d2_m0(PSI2,dbpdrdt)*m0_values(PSI2,br)*one_over_r(r)*ref%Lorentz_Coeff &
@@ -983,7 +938,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! curl(Lc*(curl B') x <B>) and curl(Lc*(curl <B>) x B') are asymmetric. Freshly derived with sympy.
         If (compute_quantity(curl_jp_cross_bm_r)) Then
             DO_PSI
                 qty(PSI) = d2_fbuffer(PSI,dbpdrdt)*m0_values(PSI2,br)*one_over_r(r)*ref%Lorentz_Coeff &
@@ -1200,8 +1154,6 @@ Contains
             Call Add_Quantity(qty)
         Endif
 
-        ! Fluctuating and mean Coriolis curls: same formulas as
-        ! curl_coriolis_force_r/theta/phi above, v -> v'/<v>.
         If (compute_quantity(curl_coriolis_pforce_r)) Then
             DO_PSI
                 qty(PSI) = -costheta(t)*fbuffer(PSI,dvtdt)*one_over_r(r)*ref%Coriolis_Coeff*ref%density(r) &
@@ -1311,8 +1263,8 @@ Contains
             Endif
         Endif
 
-        ! Fluctuating pressure curl: identical structure to curl_pressure_force_*
-        ! above, P -> P'. curl_pressure_pforce_r is always 0.
+        ! curl_pressure_pforce_r is always 0.
+        
         If (compute_quantity(curl_pressure_pforce_theta)) Then
             DO_PSI
                 qty(PSI) = pfactor(r) * &
@@ -1630,7 +1582,7 @@ Contains
         ! Derivation of the (curl F)_r identity.  Notation: for any vector A,
         !        rhat.curl(A) = (1/r) C[A],   C[A] = (1/sin(theta)) [d(sin(theta) A_phi)/dtheta - dA_theta/dphi]
         ! where the angular operator C involves no r, so Q = C[v].
-        ! 1) With S = e - (1/3) div(v) I (e the strain rate), 2 div(e) = Del^2 v + grad(div v)
+        ! 1) With S = e - (1/3) div(v) I (e the strain rate tensor), 2 div(e) = Del^2 v + grad(div v)
         !    and grad(mu) = mu' rhat:
         !        F = div(2 mu S) = mu [Del^2 v + (1/3) grad(div v)] + 2 mu' S.rhat
         !    (Viscous_Force uses div(v) = -v_r dlnrho/dr; the identity holds for any v.)

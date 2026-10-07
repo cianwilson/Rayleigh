@@ -96,7 +96,7 @@ Contains
                 Call Add_Quantity(qty)
             Endif
         Endif
-        ! Calculate buoyancy_force_squared
+        ! Calculate buoyancy_force_abs
         If (compute_quantity(buoyancy_force_abs)) Then
             DO_PSI
                 qty(PSI) = ( (ref%Buoyancy_Coeff(r)*(buffer(PSI,tvar)-ell0_values(r,tvar)))** 2)**(0.5)
@@ -191,7 +191,7 @@ Contains
                 Call Add_Quantity(qty)
             Endif
         Endif
-        ! Calculate the squared magnitude of the Coriolis force
+        ! Calculate the magnitude of the Coriolis force
         If (compute_quantity(coriolis_force_abs)) Then
             DO_PSI
                 qty(PSI) =  ((ref%density(r)*coriolis_term*sintheta(t)*buffer(PSI,vphi))**2 + &
@@ -272,7 +272,7 @@ Contains
                 Call Add_Quantity(tmp1)
             Endif
         Endif
-        ! Calculate the squared magnitude of the viscous force
+        ! Calculate the magnitude of the viscous force
         If (compute_quantity(viscous_force_abs)) Then
             DO_PSI
                 qty(k,r,t) = sqrt((mean_3dbuffer(k,r,t,vforce_r)-mean_ell0buffer(r,vforce_r))**2 + &
@@ -555,7 +555,7 @@ Contains
             END_DO
             Call Add_Quantity(qty)
         Endif
-        ! Calculate the squared magnitude of the pressure force
+        ! Calculate the magnitude of the pressure force
         If (compute_quantity(pressure_force_abs)) Then
             DO_PSI
                 qty(PSI) = ((-(buffer(PSI,dpdr) - ell0_values(r,dpdr)) * pfactor(r) + &
