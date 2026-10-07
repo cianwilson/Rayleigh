@@ -3,14 +3,13 @@ c_init/a_init (magnetic poloidal/toroidal potentials) for a single-mode
 assess smooth zero-slip poloidal field. Wl is rescaled to Rayleigh's W
 convention; the pressure Pl needs no rescaling.
 
-t_init is just the bare spherical harmonic Y(l,m) (radial part = 1):
+t_init is just the spherical harmonic Y(l,m) (radial part = 1):
 Rayleigh's own Buoyancy_Coeff(r) = (Ra/Pr)*(r/Rp)**gravity_power already
 supplies the r**k radial dependence of assess's density perturbation
 (delta_rho ~ r**k * Y(l,m) / Rp**k) once gravity_power is set to k in
-main_input -- so no separate radial profile is needed in t_init
-itself.
+main_input -- no separate radial profile is needed in t_init.
 
-c_init/a_init use the exact Christensen et al. 2001 benchmark 1 insulating
+c_init/a_init use the Christensen et al. 2001 benchmark 1 insulating
 field (l_C,m_C=1,0 poloidal; l_A,m_A=2,0 toroidal).
 """
 

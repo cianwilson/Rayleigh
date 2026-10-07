@@ -13,7 +13,9 @@ python3 generate_input.py
 mpirun -np 4 $RAYLEIGH_TEST_MPI_PARAMS ../../../bin/rayleigh.dbg
 cd ..
 
-# free-slip case: same idea, no magnetism (see free_slip/compare.py)
+# free-slip case: same idea, no magnetism (see free_slip/compare.py) but the
+# velocity field gets a toroidal component to test the curl of the viscous
+# force
 cd free_slip
 echo "================="
 echo "running free_slip"

@@ -2,12 +2,11 @@
 a single-mode assess smooth free-slip poloidal field. Wl is rescaled to
 Rayleigh's W convention; the pressure Pl needs no rescaling.
 
-t_init is just the bare spherical harmonic Y(l,m) (radial part = 1):
+t_init is just the spherical harmonic Y(l,m) (radial part = 1):
 Rayleigh's own Buoyancy_Coeff(r) = (Ra/Pr)*(r/Rp)**gravity_power already
 supplies the r**k radial dependence of assess's density perturbation
 (delta_rho ~ r**k * Y(l,m) / Rp**k) once gravity_power is set to k in
-main_input -- so no separate radial profile is needed in t_init
-itself.
+main_input -- no separate radial profile is needed in t_init.
 """
 
 import sys

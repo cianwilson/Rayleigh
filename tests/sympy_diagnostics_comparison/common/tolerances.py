@@ -16,10 +16,9 @@ free_slip and no_slip (48x64 grid; Christensen benchmark magnetic field;
 free_slip velocity with poloidal (l=8,m=4) + (l=2,m=0) and toroidal
 (l=3,m=2) + (l=4,m=0) modes).
 
-One small theta dependence remains: a few quantities have extra error in the
+Some theta dependence remains: a few quantities have extra error in the
 one or two grid rows nearest the poles, at every radius rather than just at the
-boundaries.  It is small enough to fit under a flat tolerance, so no
-theta-dependent term is used:
+boundaries.  It is small enough to fit under a flat tolerance.
   - db_theta_d2t/db_phi_d2t (relative ~1e-9 at the poles, ~1e-11 elsewhere):
     ~1e-12 radial-truncation errors in the first-derivative inputs are divided
     by sin(theta) (or sin^2) in the d2t formulas.
